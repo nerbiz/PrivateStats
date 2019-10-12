@@ -1,0 +1,23 @@
+{
+    "name": "nerbiz/private-stats",
+    "description": "Local visitor statistics, with an emphasis on visitor privacy",
+    "license": "The Unlicense",
+    "authors": [
+        {
+            "name": "Sybren Dijkstra",
+            "email": "nerbiz@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Nerbiz\\PrivateStats\\": "src/"
+        }
+    },
+    "require": {
+        "php": "^7.2",
+        "jenssegers/date": "^3.5"
+    },
+    "support" : {
+        "docs": "https://github.com/nerbiz/private-stats"
+    }
+}
