@@ -21,12 +21,13 @@ class DatabaseHandler implements HandlerInterface
 
     /**
      * @param PDO    $connection
+     * @param string $tableNamePrefix
      * @param string $tableName
      */
-    public function __construct(PDO $connection, string $tableName = 'private_stats')
+    public function __construct(PDO $connection, string $tableNamePrefix = '', string $tableName = 'private_stats')
     {
         $this->connection = $connection;
-        $this->tableName = $tableName;
+        $this->tableName = $tableNamePrefix . $tableName;
     }
 
     /**
@@ -34,7 +35,18 @@ class DatabaseHandler implements HandlerInterface
      */
     public function store(VisitInfo $visitInfo): bool
     {
-        return true;
+        $statement = $this->connection->prepare(
+            'insert into `' . $this->tableName . '`
+            (`ip_hash`, `url`, `referring_url`, `timestamp`)
+            values(:ip_hash, :url, :referring_url, :timestamp)'
+        );
+
+        return $statement->execute([
+            'ip_hash' => $visitInfo->getIpHash(),
+            'url' => $visitInfo->getUrl(),
+            'referring_url' => $visitInfo->getReferringUrl(),
+            'timestamp' => $visitInfo->getTimestamp(),
+        ]);
     }
 
     /**
@@ -47,13 +59,13 @@ class DatabaseHandler implements HandlerInterface
 
         if ($driver === 'mysql') {
             return sprintf(
-                'CREATE TABLE IF NOT EXISTS `%s` (
-                    `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                    `ip_hash` varchar(191) NULL,
-                    `url` varchar(191) NULL,
-                    `referring_url` varchar(191) NULL,
-                    `timestamp` int(10) unsigned NOT NULL,
-                    PRIMARY KEY (`id`)
+                'create table if not exists `%s` (
+                    `id` int(10) unsigned not null auto_increment,
+                    `ip_hash` varchar(191) null,
+                    `url` varchar(191) null,
+                    `referring_url` varchar(191) null,
+                    `timestamp` int(10) unsigned NOT null,
+                    primary key (`id`)
                 )',
                 $this->tableName
             );

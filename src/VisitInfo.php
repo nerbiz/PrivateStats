@@ -11,10 +11,10 @@ class VisitInfo
     protected $timestamp;
 
     /**
-     * The remote IP address of the visit
+     * The hashed remote IP address of the visit
      * @var string
      */
-    protected $ipAddress;
+    protected $ipHash;
 
     /**
      * The URL of the visit
@@ -35,7 +35,8 @@ class VisitInfo
     public function setCurrentValues(): void
     {
         $this->timestamp = time();
-        $this->ipAddress = Server::getRemoteAddress();
+        // Hash the IP address for anonymity
+        $this->ipHash = hash('sha256', Server::getRemoteAddress());
         $this->url = Server::getRequestUri();
         $this->referringUrl = Server::getReferrer();
     }
@@ -51,9 +52,9 @@ class VisitInfo
     /**
      * @return string
      */
-    public function getIpAddress(): string
+    public function getIpHash(): string
     {
-        return $this->ipAddress;
+        return $this->ipHash;
     }
 
     /**
