@@ -12,29 +12,36 @@ class CsvFileHandler extends AbstractFileHandler implements HandlerInterface
      */
     public function store(VisitInfo $visitInfo): bool
     {
-        // (Try to) create the file, if it doesn't exist yet
-        if (! file_exists($this->filePath)) {
-            $csvHeader = implode(',', ['IP hash', 'URL', 'Referring URL', 'Timestamp', 'Date']);
-            $fileIsCreated = file_put_contents($this->filePath, $csvHeader . PHP_EOL, FILE_APPEND);
+        $fileIsNew = (! file_exists($this->filePath));
 
-            if ($fileIsCreated === false) {
-                return false;
-            }
+        // Open the file, implicitly try to create it, if it doesn't exist
+        $fileHandle = fopen($this->filePath, 'a');
+        if ($fileHandle === false) {
+            return false;
         }
 
-        // Create the CSV values, escape possible commas, by using quotes
-        $csvValues = [
-            $visitInfo->getIpHash(),
-            '"' . $visitInfo->getUrl() . '"',
-            '"' . $visitInfo->getReferringUrl() . '"',
-            $visitInfo->getTimestamp(),
-            Date::createFromTimestamp($visitInfo->getTimestamp())->format('Y-m-d H:i:s'),
-        ];
+        // Add a header row, if the file is newly created
+        if ($fileIsNew) {
+            fputcsv($fileHandle, [
+                'IP hash',
+                'URL',
+                'Referring URL',
+                'Timestamp',
+                'Date'
+            ]);
+        }
 
         // Add a row to the file
-        $csvRow = implode(',', $csvValues);
-        $rowIsAdded = file_put_contents($this->filePath, $csvRow . PHP_EOL, FILE_APPEND);
+        fputcsv($fileHandle, [
+            $visitInfo->getIpHash(),
+            $visitInfo->getUrl(),
+            $visitInfo->getReferringUrl(),
+            $visitInfo->getTimestamp(),
+            Date::createFromTimestamp($visitInfo->getTimestamp())->format('Y-m-d H:i:s'),
+        ]);
 
-        return ($rowIsAdded !== false);
+        fclose($fileHandle);
+
+        return true;
     }
 }
