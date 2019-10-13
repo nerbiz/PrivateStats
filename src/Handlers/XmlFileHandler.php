@@ -3,7 +3,6 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use DOMDocument;
-use Jenssegers\Date\Date;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
 
@@ -30,7 +29,7 @@ class XmlFileHandler extends AbstractFileHandler implements HandlerInterface
         $entry->addChild('url', $visitInfo->getUrl());
         $entry->addChild('referring_url', $visitInfo->getReferringUrl());
         $entry->addChild('timestamp', $visitInfo->getTimestamp());
-        $entry->addChild('date', Date::createFromTimestamp($visitInfo->getTimestamp())->format('Y-m-d H:i:s'));
+        $entry->addChild('date', $visitInfo->getDate());
 
         // Format with newlines and indentation
         $domDocument = new DOMDocument('1.0');

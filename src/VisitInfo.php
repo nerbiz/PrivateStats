@@ -2,6 +2,8 @@
 
 namespace Nerbiz\PrivateStats;
 
+use Jenssegers\Date\Date;
+
 class VisitInfo
 {
     /**
@@ -71,5 +73,14 @@ class VisitInfo
     public function getReferringUrl(): ?string
     {
         return $this->referringUrl;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDate(): string
+    {
+        return Date::createFromTimestamp($this->getTimestamp())
+            ->format('Y-m-d H:i:s');
     }
 }

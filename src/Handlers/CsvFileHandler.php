@@ -2,7 +2,6 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-use Jenssegers\Date\Date;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler implements HandlerInterface
@@ -37,7 +36,7 @@ class CsvFileHandler extends AbstractFileHandler implements HandlerInterface
             $visitInfo->getUrl(),
             $visitInfo->getReferringUrl(),
             $visitInfo->getTimestamp(),
-            Date::createFromTimestamp($visitInfo->getTimestamp())->format('Y-m-d H:i:s'),
+            $visitInfo->getDate(),
         ]);
 
         fclose($fileHandle);
