@@ -20,6 +20,12 @@ abstract class AbstractDatabaseDriver
     protected $tableName;
 
     /**
+     * The columns that the statistics table must have
+     * @var array
+     */
+    protected $requiredColumns = ['timestamp', 'ip_hash', 'url', 'referrer'];
+
+    /**
      * @param PDO    $connection
      * @param string $tableName
      */

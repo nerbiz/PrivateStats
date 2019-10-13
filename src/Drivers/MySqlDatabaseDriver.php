@@ -38,12 +38,11 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             $this->tableName
         ));
 
-        $requiredColumns = ['ip_hash', 'url', 'referrer'];
         $currentColumns = array_map(function ($row) {
             return $row->Field;
         }, $statement->fetchAll());
 
-        $missingColumns = array_diff($requiredColumns, $currentColumns);
+        $missingColumns = array_diff($this->requiredColumns, $currentColumns);
 
         // Add any missing columns
         foreach ($missingColumns as $columnName) {
@@ -61,11 +60,22 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function getPreparedInsertStatement(): PDOStatement
     {
+        $columns = [];
+        $placeholders = [];
+
+        // Create the column and placeholder values
+        foreach ($this->requiredColumns as $columnName) {
+            $columns[] = '`' . $columnName . '`';
+            $placeholders[] = ':' . $columnName;
+        }
+
         return $this->connection->prepare(sprintf(
             'insert into `%s`
-            (`ip_hash`, `url`, `referrer`, `timestamp`)
-            values(:ip_hash, :url, :referrer, :timestamp)',
-            $this->tableName
+            (%s)
+            values(%s)',
+            $this->tableName,
+            implode(', ', $columns),
+            implode(', ', $placeholders)
         ));
     }
 
