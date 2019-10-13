@@ -6,7 +6,7 @@ use DOMDocument;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
 
-class XmlFileHandler extends AbstractFileHandler implements HandlerInterface
+class XmlFileHandler extends AbstractFileHandler
 {
     /**
      * {@inheritdoc}

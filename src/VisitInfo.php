@@ -43,7 +43,7 @@ class VisitInfo
     public function setCurrentValues(): void
     {
         $this->timestamp = time();
-        $this->date = Date::createFromTimestamp($this->getTimestamp())->format('Y-m-d H:i:s');
+        $this->date = Date::createFromTimestamp($this->getTimestamp())->format('Y-m-d H:i:s O');
         // Hash the IP address for anonymity
         $this->ipHash = hash('sha256', Server::getRemoteAddress());
         $this->url = Server::getRequestUri();

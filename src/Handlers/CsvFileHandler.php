@@ -4,7 +4,7 @@ namespace Nerbiz\PrivateStats\Handlers;
 
 use Nerbiz\PrivateStats\VisitInfo;
 
-class CsvFileHandler extends AbstractFileHandler implements HandlerInterface
+class CsvFileHandler extends AbstractFileHandler
 {
     /**
      * {@inheritdoc}

@@ -2,7 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-abstract class AbstractFileHandler
+abstract class AbstractFileHandler implements HandlerInterface
 {
     /**
      * The path to the file to create/update
