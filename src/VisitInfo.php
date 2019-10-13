@@ -13,6 +13,12 @@ class VisitInfo
     protected $timestamp;
 
     /**
+     * A date representation of the timestamp of the visit
+     * @var string
+     */
+    protected $date;
+
+    /**
      * The hashed remote IP address of the visit
      * @var string
      */
@@ -37,6 +43,7 @@ class VisitInfo
     public function setCurrentValues(): void
     {
         $this->timestamp = time();
+        $this->date = Date::createFromTimestamp($this->getTimestamp())->format('Y-m-d H:i:s');
         // Hash the IP address for anonymity
         $this->ipHash = hash('sha256', Server::getRemoteAddress());
         $this->url = Server::getRequestUri();
@@ -49,6 +56,14 @@ class VisitInfo
     public function getTimestamp(): int
     {
         return $this->timestamp;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDate(): string
+    {
+        return $this->date;
     }
 
     /**
@@ -73,14 +88,5 @@ class VisitInfo
     public function getReferringUrl(): ?string
     {
         return $this->referringUrl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getDate(): string
-    {
-        return Date::createFromTimestamp($this->getTimestamp())
-            ->format('Y-m-d H:i:s');
     }
 }
