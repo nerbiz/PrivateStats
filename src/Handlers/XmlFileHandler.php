@@ -27,7 +27,7 @@ class XmlFileHandler extends AbstractFileHandler
         $entry = $simpleXmlElement->addChild('entry');
         $entry->addChild('ip_hash', $visitInfo->getIpHash());
         $entry->addChild('url', $visitInfo->getUrl());
-        $entry->addChild('referring_url', $visitInfo->getReferringUrl());
+        $entry->addChild('referrer', $visitInfo->getReferrer());
         $entry->addChild('timestamp', $visitInfo->getTimestamp());
         $entry->addChild('date', $visitInfo->getDate());
 

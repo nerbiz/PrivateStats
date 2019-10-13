@@ -34,7 +34,7 @@ class CsvFileHandler extends AbstractFileHandler
         fputcsv($fileHandle, [
             $visitInfo->getIpHash(),
             $visitInfo->getUrl(),
-            $visitInfo->getReferringUrl(),
+            $visitInfo->getReferrer(),
             $visitInfo->getTimestamp(),
             $visitInfo->getDate(),
         ]);

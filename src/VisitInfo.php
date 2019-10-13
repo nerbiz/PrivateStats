@@ -34,7 +34,7 @@ class VisitInfo
      * The referring URL of the visit
      * @var string|null
      */
-    protected $referringUrl;
+    protected $referrer;
 
     /**
      * Fill the properties of this instance
@@ -47,7 +47,7 @@ class VisitInfo
         // Hash the IP address for anonymity
         $this->ipHash = hash('sha256', Server::getRemoteAddress());
         $this->url = Server::getRequestUri();
-        $this->referringUrl = Server::getReferrer();
+        $this->referrer = Server::getReferrer();
     }
 
     /**
@@ -85,8 +85,8 @@ class VisitInfo
     /**
      * @return string|null
      */
-    public function getReferringUrl(): ?string
+    public function getReferrer(): ?string
     {
-        return $this->referringUrl;
+        return $this->referrer;
     }
 }
