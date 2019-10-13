@@ -61,11 +61,11 @@ class DatabaseHandler implements HandlerInterface
 
         return $this->driver
             ->getPreparedInsertStatement()
-            ->execute([
+            ->execute($this->driver->filterBeforeInsert([
                 'ip_hash' => $visitInfo->getIpHash(),
                 'url' => $visitInfo->getUrl(),
                 'referrer' => $visitInfo->getReferrer(),
                 'timestamp' => $visitInfo->getTimestamp(),
-            ]);
+            ]));
     }
 }

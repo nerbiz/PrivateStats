@@ -7,6 +7,11 @@ use PDOStatement;
 class MySqlDatabaseDriver extends AbstractDatabaseDriver
 {
     /**
+     * @var int
+     */
+    const VARCHAR_LENGTH = 191;
+
+    /**
      * {@inheritdoc}
      */
     public function ensureTable(): void
@@ -80,6 +85,23 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function filterBeforeInsert(array $values): array
+    {
+        // Values can't exceed the maximum character length
+        if (isset($values['url'])) {
+            $values['url'] = substr($values['url'], 0, static::VARCHAR_LENGTH);
+        }
+
+        if (isset($values['referrer'])) {
+            $values['referrer'] = substr($values['referrer'], 0, static::VARCHAR_LENGTH);
+        }
+
+        return $values;
+    }
+
+    /**
      * Get a column definition for creating or altering a table
      * @param string $columnName
      * @return string
@@ -88,11 +110,11 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     {
         switch ($columnName) {
             case 'ip_hash':
-                return '`ip_hash` varchar(191) null';
+                return sprintf('`ip_hash` varchar(%d) null', static::VARCHAR_LENGTH);
             case 'url':
-                return '`url` varchar(191) null';
+                return sprintf('`url` varchar(%d) null', static::VARCHAR_LENGTH);
             case 'referrer':
-                return '`referrer` varchar(191) null';
+                return sprintf('`referrer` varchar(%d) null', static::VARCHAR_LENGTH);
             default:
                 return '';
         }

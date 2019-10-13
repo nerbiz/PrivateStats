@@ -52,4 +52,11 @@ abstract class AbstractDatabaseDriver
      * @return PDOStatement
      */
     abstract public function getPreparedInsertStatement(): PDOStatement;
+
+    /**
+     * Make optional adjustments, before inserting data into the database
+     * @param array $values
+     * @return array
+     */
+    abstract public function filterBeforeInsert(array $values): array;
 }
