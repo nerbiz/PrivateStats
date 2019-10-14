@@ -1,7 +1,7 @@
 {
     "name": "nerbiz/private-stats",
     "description": "Local visitor statistics, with an emphasis on visitor privacy",
-    "license": "The Unlicense",
+    "license": "Unlicense",
     "authors": [
         {
             "name": "Sybren Dijkstra",
