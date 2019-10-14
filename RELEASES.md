@@ -1,5 +1,10 @@
 # Release notes
 
+## 0.1.1
+#### 2019-10-14
+
+* Updated the license name, because of a Packagist crawl error.
+
 ## 0.1.0
 #### 2019-10-13
 
