@@ -75,7 +75,10 @@ class CsvFileHandler extends AbstractFileHandler
                 ->setUrl($row['url'] ?? '')
                 ->setReferrer($row['referrer'] ?? '');
 
-            $allRows[] = $visitInfo;
+            // Add to the collection, if it passes the where clauses
+            if ($this->keepItem($visitInfo)) {
+                $allRows[] = $visitInfo;
+            }
         }
 
         fclose($fileHandle);
