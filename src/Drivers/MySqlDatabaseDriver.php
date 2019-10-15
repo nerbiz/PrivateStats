@@ -16,20 +16,22 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function ensureTable(): void
     {
-        $this->connection->exec(sprintf(
-            'create table if not exists `%s` (
-                `id` int(10) unsigned not null auto_increment,
-                `timestamp` int(10) unsigned not null,
-                %s,
-                %s,
-                %s,
-                primary key (`id`)
-            )',
-            $this->tableName,
-            $this->getColumnDefinition('ip_hash'),
-            $this->getColumnDefinition('url'),
-            $this->getColumnDefinition('referrer')
-        ));
+        $this->databaseConnection
+            ->getPdo()
+            ->exec(sprintf(
+                'create table if not exists `%s` (
+                    `id` int(10) unsigned not null auto_increment,
+                    `timestamp` int(10) unsigned not null,
+                    %s,
+                    %s,
+                    %s,
+                    primary key (`id`)
+                )',
+                $this->databaseConnection->getFullTableName(),
+                $this->getColumnDefinition('ip_hash'),
+                $this->getColumnDefinition('url'),
+                $this->getColumnDefinition('referrer')
+            ));
     }
 
     /**
@@ -37,11 +39,13 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function ensureColumns(): void
     {
-        $statement = $this->connection->query(sprintf(
-            'show columns
-            from `%s`',
-            $this->tableName
-        ));
+        $statement = $this->databaseConnection
+            ->getPdo()
+            ->query(sprintf(
+                'show columns
+                from `%s`',
+                $this->databaseConnection->getFullTableName()
+            ));
 
         $currentColumns = array_map(function ($row) {
             return $row->Field;
@@ -51,12 +55,14 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
 
         // Add any missing columns
         foreach ($missingColumns as $columnName) {
-            $this->connection->exec(sprintf(
-                'alter table `%s`
-                add column %s',
-                $this->tableName,
-                $this->getColumnDefinition($columnName)
-            ));
+            $this->databaseConnection
+                ->getPdo()
+                ->exec(sprintf(
+                    'alter table `%s`
+                    add column %s',
+                    $this->databaseConnection->getFullTableName(),
+                    $this->getColumnDefinition($columnName)
+                ));
         }
     }
 
@@ -74,14 +80,16 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             $placeholders[] = ':' . $columnName;
         }
 
-        return $this->connection->prepare(sprintf(
-            'insert into `%s`
-            (%s)
-            values(%s)',
-            $this->tableName,
-            implode(', ', $columns),
-            implode(', ', $placeholders)
-        ));
+        return $this->databaseConnection
+            ->getPdo()
+            ->prepare(sprintf(
+                'insert into `%s`
+                (%s)
+                values(%s)',
+                $this->databaseConnection->getFullTableName(),
+                implode(', ', $columns),
+                implode(', ', $placeholders)
+            ));
     }
 
     /**
