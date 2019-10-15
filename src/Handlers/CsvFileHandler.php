@@ -2,8 +2,8 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-use Nerbiz\PrivateStats\Query\AbstractQuery;
-use Nerbiz\PrivateStats\Query\CsvQuery;
+use Nerbiz\PrivateStats\Collections\CsvQuery;
+use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -24,11 +24,11 @@ class CsvFileHandler extends AbstractFileHandler
         // Add a header row, if the file is newly created
         if ($fileIsNew) {
             fputcsv($fileHandle, [
-                'IP hash',
-                'URL',
-                'Referring URL',
-                'Timestamp',
-                'Date'
+                'timestamp',
+                'date',
+                'ip_hash',
+                'url',
+                'referrer',
             ]);
         }
 
@@ -49,8 +49,38 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function getQuery(): AbstractQuery
+    public function read(): VisitInfoCollection
     {
-        return new CsvQuery();
+        $fileHandle = fopen($this->filePath, 'r');
+        if ($fileHandle === false) {
+            return false;
+        }
+
+        // The array of all rows from the CSV file
+        $allRows = [];
+
+        $headerRow = null;
+        while (($csvRow = fgetcsv($fileHandle)) !== false) {
+            // Get the keys from the header row
+            if ($headerRow === null) {
+                $headerRow = $csvRow;
+                continue;
+            }
+
+            // Create a visit information object from the row data
+            $row = array_combine($headerRow, $csvRow);
+            $visitInfo = (new VisitInfo())
+                ->setTimestamp((int)$row['timestamp'] ?? '')
+                ->setDateFromTimestamp($row['timestamp'] ?? '')
+                ->setIpHash($row['ip_hash'] ?? '')
+                ->setUrl($row['url'] ?? '')
+                ->setReferrer($row['referrer'] ?? '');
+
+            $allRows[] = $visitInfo;
+        }
+
+        fclose($fileHandle);
+
+        return new VisitInfoCollection($allRows);
     }
 }

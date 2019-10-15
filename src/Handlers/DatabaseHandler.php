@@ -3,8 +3,8 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
-use Nerbiz\PrivateStats\Query\AbstractQuery;
-use Nerbiz\PrivateStats\Query\DatabaseQuery;
+use Nerbiz\PrivateStats\Collections\DatabaseQuery;
+use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
@@ -50,8 +50,8 @@ class DatabaseHandler implements HandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getQuery(): AbstractQuery
+    public function read(): VisitInfoCollection
     {
-        return new DatabaseQuery($this->databaseConnection);
+        return new VisitInfoCollection([]);
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-use Nerbiz\PrivateStats\Query\AbstractQuery;
+use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\VisitInfo;
 
 interface HandlerInterface
@@ -15,8 +15,8 @@ interface HandlerInterface
     public function store(VisitInfo $visitInfo): bool;
 
     /**
-     * Get a query object to get items with
-     * @return AbstractQuery
+     * Get stored information
+     * @return VisitInfoCollection
      */
-    public function getQuery(): AbstractQuery;
+    public function read(): VisitInfoCollection;
 }

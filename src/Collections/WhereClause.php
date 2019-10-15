@@ -1,6 +1,6 @@
 <?php
 
-namespace Nerbiz\PrivateStats\Query;
+namespace Nerbiz\PrivateStats\Collections;
 
 class WhereClause
 {
