@@ -14,15 +14,7 @@ class XmlFileHandler extends AbstractFileHandler
      */
     public function write(VisitInfo $visitInfo): bool
     {
-        // Get existing XML, or create a new document
-        if (! file_exists($this->filePath)) {
-            $simpleXmlElement = new SimpleXMLElement(''
-                . '<?xml version="1.0" encoding="UTF-8"?>'
-                . '<statistics></statistics>'
-            );
-        } else {
-            $simpleXmlElement = simplexml_load_file($this->filePath);
-        }
+        $simpleXmlElement = $this->getXmlFromFile();
 
         // Add an entry to the statistics
         $entry = $simpleXmlElement->addChild('entry');
@@ -49,6 +41,38 @@ class XmlFileHandler extends AbstractFileHandler
      */
     public function read(): array
     {
-        return [];
+        $allRows = [];
+        $simpleXmlElement = $this->getXmlFromFile();
+
+        foreach ($simpleXmlElement as $entry) {
+            $visitInfo = (new VisitInfo())
+                ->setTimestamp($entry->timestamp)
+                ->setDateFromTimestamp($entry->timestamp)
+                ->setIpHash($entry->ip_hash)
+                ->setUrl($entry->url)
+                ->setReferrer($entry->referrer);
+
+            if ($this->keepItem($visitInfo)) {
+                $allRows[] = $visitInfo;
+            }
+        }
+
+        return $allRows;
+    }
+
+    /**
+     * Get existing XML, or create a new document
+     * @return SimpleXMLElement
+     */
+    protected function getXmlFromFile(): SimpleXMLElement
+    {
+        if (! file_exists($this->filePath)) {
+            return new SimpleXMLElement(''
+                . '<?xml version="1.0" encoding="UTF-8"?>'
+                . '<statistics></statistics>'
+            );
+        } else {
+            return simplexml_load_file($this->filePath);
+        }
     }
 }

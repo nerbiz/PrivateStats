@@ -50,13 +50,12 @@ class CsvFileHandler extends AbstractFileHandler
      */
     public function read(): array
     {
+        $allRows = [];
+
         $fileHandle = fopen($this->filePath, 'r');
         if ($fileHandle === false) {
-            return false;
+            return $allRows;
         }
-
-        // The array of all rows from the CSV file
-        $allRows = [];
 
         $headerRow = null;
         while (($csvRow = fgetcsv($fileHandle)) !== false) {
@@ -69,7 +68,7 @@ class CsvFileHandler extends AbstractFileHandler
             // Create a visit information object from the row data
             $row = array_combine($headerRow, $csvRow);
             $visitInfo = (new VisitInfo())
-                ->setTimestamp((int)$row['timestamp'] ?? '')
+                ->setTimestamp($row['timestamp'] ?? '')
                 ->setDateFromTimestamp($row['timestamp'] ?? '')
                 ->setIpHash($row['ip_hash'] ?? '')
                 ->setUrl($row['url'] ?? '')
