@@ -3,7 +3,6 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use DOMDocument;
-use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\Collections\XmlQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
@@ -48,8 +47,8 @@ class XmlFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): VisitInfoCollection
+    public function read(): array
     {
-        return new VisitInfoCollection([]);
+        return [];
     }
 }

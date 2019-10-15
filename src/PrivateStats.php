@@ -2,13 +2,13 @@
 
 namespace Nerbiz\PrivateStats;
 
-use Nerbiz\PrivateStats\Handlers\HandlerInterface;
+use Nerbiz\PrivateStats\Handlers\AbstractHandler;
 
 class PrivateStats
 {
     /**
      * The handler for storing visit information
-     * @var HandlerInterface
+     * @var AbstractHandler
      */
     protected $handler;
 
@@ -20,9 +20,9 @@ class PrivateStats
     protected $excludeIps = [];
 
     /**
-     * @param HandlerInterface $handler
+     * @param AbstractHandler $handler
      */
-    public function __construct(HandlerInterface $handler)
+    public function __construct(AbstractHandler $handler)
     {
         $this->handler = $handler;
     }
@@ -62,9 +62,9 @@ class PrivateStats
     }
 
     /**
-     * @return HandlerInterface
+     * @return AbstractHandler
      */
-    public function getHandler(): HandlerInterface
+    public function getHandler(): AbstractHandler
     {
         return $this->handler;
     }

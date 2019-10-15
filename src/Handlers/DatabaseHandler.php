@@ -4,11 +4,10 @@ namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
 use Nerbiz\PrivateStats\Collections\DatabaseQuery;
-use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
-class DatabaseHandler implements HandlerInterface
+class DatabaseHandler extends AbstractHandler
 {
     /**
      * The object containing connection information
@@ -50,8 +49,8 @@ class DatabaseHandler implements HandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function read(): VisitInfoCollection
+    public function read(): array
     {
-        return new VisitInfoCollection([]);
+        return [];
     }
 }

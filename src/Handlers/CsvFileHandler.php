@@ -3,7 +3,6 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Nerbiz\PrivateStats\Collections\CsvQuery;
-use Nerbiz\PrivateStats\Collections\VisitInfoCollection;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -49,7 +48,7 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): VisitInfoCollection
+    public function read(): array
     {
         $fileHandle = fopen($this->filePath, 'r');
         if ($fileHandle === false) {
@@ -81,6 +80,6 @@ class CsvFileHandler extends AbstractFileHandler
 
         fclose($fileHandle);
 
-        return new VisitInfoCollection($allRows);
+        return $allRows;
     }
 }
