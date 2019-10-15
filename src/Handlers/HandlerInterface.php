@@ -12,7 +12,7 @@ interface HandlerInterface
      * @param VisitInfo $visitInfo
      * @return bool Indicates whether storing was successful
      */
-    public function store(VisitInfo $visitInfo): bool;
+    public function write(VisitInfo $visitInfo): bool;
 
     /**
      * Get stored information

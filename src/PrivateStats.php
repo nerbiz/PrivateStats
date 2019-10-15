@@ -58,7 +58,7 @@ class PrivateStats
         $visitInfo = new VisitInfo();
         $visitInfo->setCurrentValues();
 
-        return $this->handler->store($visitInfo);
+        return $this->handler->write($visitInfo);
     }
 
     /**

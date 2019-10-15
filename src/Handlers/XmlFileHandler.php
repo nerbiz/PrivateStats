@@ -13,7 +13,7 @@ class XmlFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function store(VisitInfo $visitInfo): bool
+    public function write(VisitInfo $visitInfo): bool
     {
         // Get existing XML, or create a new document
         if (! file_exists($this->filePath)) {

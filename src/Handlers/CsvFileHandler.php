@@ -11,7 +11,7 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function store(VisitInfo $visitInfo): bool
+    public function write(VisitInfo $visitInfo): bool
     {
         $fileIsNew = (! file_exists($this->filePath));
 

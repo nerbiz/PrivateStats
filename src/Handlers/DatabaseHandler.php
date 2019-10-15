@@ -30,7 +30,7 @@ class DatabaseHandler implements HandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function store(VisitInfo $visitInfo): bool
+    public function write(VisitInfo $visitInfo): bool
     {
         $driver = $this->databaseConnection->getDriver();
 
