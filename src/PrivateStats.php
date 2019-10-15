@@ -14,6 +14,7 @@ class PrivateStats
 
     /**
      * A list of IP addresses to exclude in statistics
+     * Supports wildcard (*) character
      * @var array
      */
     protected $excludeIps = [];
@@ -42,10 +43,18 @@ class PrivateStats
     public function storeCurrentVisitInfo(): bool
     {
         // Check if the current visit should be excluded
-        if (in_array(Server::getRemoteAddress(), $this->excludeIps, true)) {
-            return false;
+        foreach ($this->excludeIps as $excludeIp) {
+            // Create the regular expression, replace wildcard character
+            $regex = preg_quote($excludeIp);
+            $regex = str_replace('\*', '.+', $regex);
+            $regex = sprintf('/^%s$/', $regex);
+
+            if (preg_match('/^'.$regex.'$/', Server::getRemoteAddress()) === 1) {
+                return false;
+            }
         }
 
+        // Store the current visit information
         $visitInfo = new VisitInfo();
         $visitInfo->setCurrentValues();
 

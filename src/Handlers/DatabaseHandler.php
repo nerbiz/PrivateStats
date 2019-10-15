@@ -40,6 +40,7 @@ class DatabaseHandler implements HandlerInterface
         $this->tableName = $tableNamePrefix . $tableName;
 
         $pdoDriver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
+
         if ($pdoDriver === 'mysql') {
             $this->driver = new MySqlDatabaseDriver($this->connection, $this->tableName);
         } else {
