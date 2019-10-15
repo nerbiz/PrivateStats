@@ -95,6 +95,38 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     /**
      * {@inheritdoc}
      */
+    public function getSelectStatement(array $whereClauses = []): PDOStatement
+    {
+        // Create where queries per clause
+        $whereQueries = [];
+        foreach ($whereClauses as $whereClause) {
+            $whereQueries[] = sprintf(
+                "`%s` %s '%s'",
+                $whereClause->getKey(),
+                $whereClause->getOperator(),
+                $whereClause->getValue()
+            );
+        }
+
+        // Construct the full where query
+        $fullWhereQuery = (count($whereQueries) > 0)
+            ? 'where ' . implode(' and ', $whereQueries)
+            : '';
+        
+        return $this->databaseConnection
+            ->getPdo()
+            ->query(sprintf(
+                'select *
+                from `%s`
+                %s',
+                $this->databaseConnection->getFullTableName(),
+                $fullWhereQuery
+            ));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function filterBeforeInsert(array $values): array
     {
         // Values can't exceed the maximum character length

@@ -3,6 +3,7 @@
 namespace Nerbiz\PrivateStats\Drivers;
 
 use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
+use Nerbiz\PrivateStats\Handlers\WhereClause;
 use PDOStatement;
 
 abstract class AbstractDatabaseDriver
@@ -37,10 +38,17 @@ abstract class AbstractDatabaseDriver
     abstract public function ensureColumns(): void;
 
     /**
-     * Get a prepared statement for inserting statistics into a database
+     * Get a prepared statement for inserting data into a database
      * @return PDOStatement
      */
     abstract public function getPreparedInsertStatement(): PDOStatement;
+
+    /**
+     * Get a statement for selecting data, with optional 'where' clauses
+     * @param WhereClause[] $whereClauses
+     * @return PDOStatement
+     */
+    abstract public function getSelectStatement(array $whereClauses = []): PDOStatement;
 
     /**
      * Make optional adjustments, before inserting data into the database
