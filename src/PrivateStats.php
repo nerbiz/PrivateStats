@@ -60,4 +60,12 @@ class PrivateStats
 
         return $this->handler->store($visitInfo);
     }
+
+    /**
+     * @return HandlerInterface
+     */
+    public function getHandler(): HandlerInterface
+    {
+        return $this->handler;
+    }
 }

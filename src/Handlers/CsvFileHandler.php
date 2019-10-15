@@ -2,6 +2,8 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
+use Nerbiz\PrivateStats\Query\AbstractQuery;
+use Nerbiz\PrivateStats\Query\CsvQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -42,5 +44,13 @@ class CsvFileHandler extends AbstractFileHandler
         fclose($fileHandle);
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery(): AbstractQuery
+    {
+        return new CsvQuery();
     }
 }

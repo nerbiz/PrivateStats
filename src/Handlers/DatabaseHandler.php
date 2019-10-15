@@ -3,6 +3,8 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
+use Nerbiz\PrivateStats\Query\AbstractQuery;
+use Nerbiz\PrivateStats\Query\DatabaseQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
@@ -43,5 +45,13 @@ class DatabaseHandler implements HandlerInterface
                 'referrer' => $visitInfo->getReferrer(),
                 'timestamp' => $visitInfo->getTimestamp(),
             ]));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery(): AbstractQuery
+    {
+        return new DatabaseQuery($this->databaseConnection);
     }
 }

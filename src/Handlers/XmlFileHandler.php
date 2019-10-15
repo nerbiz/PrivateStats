@@ -3,6 +3,8 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use DOMDocument;
+use Nerbiz\PrivateStats\Query\AbstractQuery;
+use Nerbiz\PrivateStats\Query\XmlQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
 
@@ -41,5 +43,13 @@ class XmlFileHandler extends AbstractFileHandler
         $fileIsSaved = $domDocument->save($this->filePath);
 
         return ($fileIsSaved !== false);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getQuery(): AbstractQuery
+    {
+        return new XmlQuery();
     }
 }
