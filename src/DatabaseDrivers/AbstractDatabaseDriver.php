@@ -1,6 +1,6 @@
 <?php
 
-namespace Nerbiz\PrivateStats\Drivers;
+namespace Nerbiz\PrivateStats\DatabaseDrivers;
 
 use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
 use Nerbiz\PrivateStats\Query\ReadQuery;

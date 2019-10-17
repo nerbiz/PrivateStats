@@ -3,8 +3,8 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
-use Nerbiz\PrivateStats\Drivers\AbstractDatabaseDriver;
-use Nerbiz\PrivateStats\Drivers\MySqlDatabaseDriver;
+use Nerbiz\PrivateStats\DatabaseDrivers\AbstractDatabaseDriver;
+use Nerbiz\PrivateStats\DatabaseDrivers\MySqlDatabaseDriver;
 use PDO;
 
 class DatabaseConnection
