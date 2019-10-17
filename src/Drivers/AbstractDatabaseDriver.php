@@ -3,7 +3,7 @@
 namespace Nerbiz\PrivateStats\Drivers;
 
 use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
-use Nerbiz\PrivateStats\Handlers\WhereClause;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use PDOStatement;
 
 abstract class AbstractDatabaseDriver
@@ -45,10 +45,10 @@ abstract class AbstractDatabaseDriver
 
     /**
      * Get a statement for selecting data, with optional 'where' clauses
-     * @param WhereClause[] $whereClauses
+     * @param ReadQuery $readQuery
      * @return PDOStatement
      */
-    abstract public function getSelectStatement(array $whereClauses = []): PDOStatement;
+    abstract public function getSelectStatement(ReadQuery $readQuery): PDOStatement;
 
     /**
      * Make optional adjustments, before inserting data into the database

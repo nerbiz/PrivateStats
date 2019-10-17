@@ -3,7 +3,7 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use DOMDocument;
-use Nerbiz\PrivateStats\Collections\XmlQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
 
@@ -39,7 +39,7 @@ class XmlFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(ReadQuery $readQuery): array
     {
         $allRows = [];
         $simpleXmlElement = $this->getXmlFromFile();
@@ -47,7 +47,7 @@ class XmlFileHandler extends AbstractFileHandler
         foreach ($simpleXmlElement as $entry) {
             $visitInfo = VisitInfo::fromArray((array)$entry);
 
-            if ($this->keepItem($visitInfo)) {
+            if ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }

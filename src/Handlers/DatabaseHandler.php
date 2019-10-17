@@ -3,7 +3,7 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
-use Nerbiz\PrivateStats\Collections\DatabaseQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
@@ -48,13 +48,13 @@ class DatabaseHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(ReadQuery $readQuery): array
     {
         $driver = $this->databaseConnection->getDriver();
         $driver->ensureTable();
         $driver->ensureColumns();
 
-        $selectStatement = $driver->getSelectStatement($this->whereClauses);
+        $selectStatement = $driver->getSelectStatement($readQuery);
 
         return array_map(function ($item) {
             return VisitInfo::fromStdClass($item);

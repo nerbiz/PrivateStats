@@ -2,7 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-use Nerbiz\PrivateStats\Collections\CsvQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -48,7 +48,7 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(ReadQuery $readQuery): array
     {
         $allRows = [];
 
@@ -70,7 +70,7 @@ class CsvFileHandler extends AbstractFileHandler
             $visitInfo = VisitInfo::fromArray($row);
 
             // Add to the collection, if it passes the where clauses
-            if ($this->keepItem($visitInfo)) {
+            if ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }

@@ -2,6 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Drivers;
 
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use PDOStatement;
 
 class MySqlDatabaseDriver extends AbstractDatabaseDriver
@@ -95,18 +96,17 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     /**
      * {@inheritdoc}
      */
-    public function getSelectStatement(array $whereClauses = []): PDOStatement
+    public function getSelectStatement(ReadQuery $readQuery): PDOStatement
     {
         // Create where queries per clause
-        $whereQueries = [];
-        foreach ($whereClauses as $whereClause) {
-            $whereQueries[] = sprintf(
+        $whereQueries = array_map(function ($whereClause) {
+            return sprintf(
                 "`%s` %s '%s'",
                 $whereClause->getKey(),
                 $whereClause->getOperator(),
                 $whereClause->getValue()
             );
-        }
+        }, $readQuery->getWhereClauses());
 
         // Construct the full where query
         $fullWhereQuery = (count($whereQueries) > 0)
