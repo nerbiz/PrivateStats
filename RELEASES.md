@@ -1,5 +1,13 @@
 # Release notes
 
+## 0.2.0
+#### 2019-10-17
+
+* Added a wildcard option to excluding IP addresses.
+* Added reading of a CSV file.
+* Added reading of an XML file.
+* Added reading of a database.
+
 ## 0.1.1
 #### 2019-10-14
 
