@@ -2,26 +2,27 @@
 
 namespace Nerbiz\PrivateStats;
 
-use Nerbiz\PrivateStats\Handlers\HandlerInterface;
+use Nerbiz\PrivateStats\Handlers\AbstractHandler;
 
 class PrivateStats
 {
     /**
      * The handler for storing visit information
-     * @var HandlerInterface
+     * @var AbstractHandler
      */
     protected $handler;
 
     /**
      * A list of IP addresses to exclude in statistics
+     * Supports wildcard (*) character
      * @var array
      */
     protected $excludeIps = [];
 
     /**
-     * @param HandlerInterface $handler
+     * @param AbstractHandler $handler
      */
-    public function __construct(HandlerInterface $handler)
+    public function __construct(AbstractHandler $handler)
     {
         $this->handler = $handler;
     }
@@ -42,13 +43,29 @@ class PrivateStats
     public function storeCurrentVisitInfo(): bool
     {
         // Check if the current visit should be excluded
-        if (in_array(Server::getRemoteAddress(), $this->excludeIps, true)) {
-            return false;
+        foreach ($this->excludeIps as $excludeIp) {
+            // Create the regular expression, replace wildcard character
+            $regex = preg_quote($excludeIp);
+            $regex = str_replace('\*', '.+', $regex);
+            $regex = sprintf('/^%s$/', $regex);
+
+            if (preg_match('/^'.$regex.'$/', Server::getRemoteAddress()) === 1) {
+                return false;
+            }
         }
 
+        // Store the current visit information
         $visitInfo = new VisitInfo();
         $visitInfo->setCurrentValues();
 
-        return $this->handler->store($visitInfo);
+        return $this->handler->write($visitInfo);
+    }
+
+    /**
+     * @return AbstractHandler
+     */
+    public function getHandler(): AbstractHandler
+    {
+        return $this->handler;
     }
 }

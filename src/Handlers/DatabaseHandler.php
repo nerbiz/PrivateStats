@@ -3,69 +3,71 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
-use Nerbiz\PrivateStats\Drivers\DatabaseDriverInterface;
-use Nerbiz\PrivateStats\Drivers\MySqlDatabaseDriver;
+use Nerbiz\PrivateStats\Collections\DatabaseQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
-class DatabaseHandler implements HandlerInterface
+class DatabaseHandler extends AbstractHandler
 {
     /**
-     * The database connection
-     * @var PDO
+     * The object containing connection information
+     * @var DatabaseConnection
      */
-    protected $connection;
+    protected $databaseConnection;
 
     /**
-     * The table name to store the visit info in
-     * @var string
-     */
-    protected $tableName;
-
-    /**
-     * The driver for the database handling
-     * @var DatabaseDriverInterface
-     */
-    protected $driver;
-
-    /**
-     * @param PDO    $connection
+     * @param PDO    $pdo
      * @param string $tableNamePrefix
      * @param string $tableName
      * @throws Exception
      */
-    public function __construct(PDO $connection, string $tableNamePrefix = '', string $tableName = 'private_stats')
+    public function __construct(PDO $pdo, string $tableNamePrefix = '', string $tableName = 'private_stats')
     {
-        $this->connection = $connection;
-        $this->tableName = $tableNamePrefix . $tableName;
-
-        $pdoDriver = $this->connection->getAttribute(PDO::ATTR_DRIVER_NAME);
-        if ($pdoDriver === 'mysql') {
-            $this->driver = new MySqlDatabaseDriver($this->connection, $this->tableName);
-        } else {
-            throw new Exception(sprintf(
-                "%s(): database type '%s' is not supported yet",
-                __METHOD__,
-                $pdoDriver
-            ));
-        }
+        $this->databaseConnection = new DatabaseConnection($pdo, $tableNamePrefix, $tableName);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function store(VisitInfo $visitInfo): bool
+    public function write(VisitInfo $visitInfo): bool
     {
-        $this->driver->ensureTable();
-        $this->driver->ensureColumns();
+        $driver = $this->databaseConnection->getDriver();
+        $driver->ensureTable();
+        $driver->ensureColumns();
 
-        return $this->driver
+        return $driver
             ->getPreparedInsertStatement()
-            ->execute($this->driver->filterBeforeInsert([
+            ->execute($driver->filterBeforeInsert([
                 'ip_hash' => $visitInfo->getIpHash(),
                 'url' => $visitInfo->getUrl(),
                 'referrer' => $visitInfo->getReferrer(),
                 'timestamp' => $visitInfo->getTimestamp(),
             ]));
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function read(): array
+    {
+        $allRows = [];
+
+        $driver = $this->databaseConnection->getDriver();
+        $driver->ensureTable();
+        $driver->ensureColumns();
+
+        $selectStatement = $driver->getSelectStatement($this->whereClauses);
+        foreach ($selectStatement->fetchAll() as $item) {
+            $visitInfo = (new VisitInfo())
+                ->setTimestamp($item->timestamp)
+                ->setDateFromTimestamp($item->timestamp)
+                ->setIpHash($item->ip_hash)
+                ->setUrl($item->url)
+                ->setReferrer($item->referrer);
+
+            $allRows[] = $visitInfo;
+        }
+
+        return $allRows;
     }
 }

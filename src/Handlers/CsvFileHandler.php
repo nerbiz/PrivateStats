@@ -2,6 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
+use Nerbiz\PrivateStats\Collections\CsvQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -9,7 +10,7 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function store(VisitInfo $visitInfo): bool
+    public function write(VisitInfo $visitInfo): bool
     {
         $fileIsNew = (! file_exists($this->filePath));
 
@@ -22,11 +23,11 @@ class CsvFileHandler extends AbstractFileHandler
         // Add a header row, if the file is newly created
         if ($fileIsNew) {
             fputcsv($fileHandle, [
-                'IP hash',
-                'URL',
-                'Referring URL',
-                'Timestamp',
-                'Date'
+                'timestamp',
+                'date',
+                'ip_hash',
+                'url',
+                'referrer',
             ]);
         }
 
@@ -42,5 +43,45 @@ class CsvFileHandler extends AbstractFileHandler
         fclose($fileHandle);
 
         return true;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function read(): array
+    {
+        $allRows = [];
+
+        $fileHandle = fopen($this->filePath, 'r');
+        if ($fileHandle === false) {
+            return $allRows;
+        }
+
+        $headerRow = null;
+        while (($csvRow = fgetcsv($fileHandle)) !== false) {
+            // Get the keys from the header row
+            if ($headerRow === null) {
+                $headerRow = $csvRow;
+                continue;
+            }
+
+            // Create a visit information object from the row data
+            $row = array_combine($headerRow, $csvRow);
+            $visitInfo = (new VisitInfo())
+                ->setTimestamp($row['timestamp'] ?? '')
+                ->setDateFromTimestamp($row['timestamp'] ?? '')
+                ->setIpHash($row['ip_hash'] ?? '')
+                ->setUrl($row['url'] ?? '')
+                ->setReferrer($row['referrer'] ?? '');
+
+            // Add to the collection, if it passes the where clauses
+            if ($this->keepItem($visitInfo)) {
+                $allRows[] = $visitInfo;
+            }
+        }
+
+        fclose($fileHandle);
+
+        return $allRows;
     }
 }

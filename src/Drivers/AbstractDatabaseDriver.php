@@ -2,22 +2,17 @@
 
 namespace Nerbiz\PrivateStats\Drivers;
 
-use PDO;
+use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
+use Nerbiz\PrivateStats\Handlers\WhereClause;
 use PDOStatement;
 
 abstract class AbstractDatabaseDriver
 {
     /**
      * The database connection
-     * @var PDO
+     * @var DatabaseConnection
      */
-    protected $connection;
-
-    /**
-     * The table name to store in and read from
-     * @var string
-     */
-    protected $tableName;
+    protected $databaseConnection;
 
     /**
      * The columns that the statistics table must have
@@ -25,14 +20,9 @@ abstract class AbstractDatabaseDriver
      */
     protected $requiredColumns = ['timestamp', 'ip_hash', 'url', 'referrer'];
 
-    /**
-     * @param PDO    $connection
-     * @param string $tableName
-     */
-    public function __construct(PDO $connection, string $tableName)
+    public function __construct(DatabaseConnection $databaseConnection)
     {
-        $this->connection = $connection;
-        $this->tableName = $tableName;
+        $this->databaseConnection = $databaseConnection;
     }
 
     /**
@@ -48,10 +38,17 @@ abstract class AbstractDatabaseDriver
     abstract public function ensureColumns(): void;
 
     /**
-     * Get a prepared statement for inserting statistics into a database
+     * Get a prepared statement for inserting data into a database
      * @return PDOStatement
      */
     abstract public function getPreparedInsertStatement(): PDOStatement;
+
+    /**
+     * Get a statement for selecting data, with optional 'where' clauses
+     * @param WhereClause[] $whereClauses
+     * @return PDOStatement
+     */
+    abstract public function getSelectStatement(array $whereClauses = []): PDOStatement;
 
     /**
      * Make optional adjustments, before inserting data into the database
