@@ -3,6 +3,7 @@
 namespace Nerbiz\PrivateStats;
 
 use Jenssegers\Date\Date;
+use stdClass;
 
 class VisitInfo
 {
@@ -48,6 +49,38 @@ class VisitInfo
         $this->setIpHash(hash('sha256', Server::getRemoteAddress()));
         $this->setUrl(Server::getRequestUri());
         $this->setReferrer(Server::getReferrer());
+    }
+
+    /**
+     * Create a new instance from an array
+     * @param array $data
+     * @return self
+     */
+    public static function fromArray(array $data): self
+    {
+        return static::fromStdClass((object)$data);
+    }
+
+    /**
+     * Create a new instance from a stdClass instance
+     * @param stdClass $data
+     * @return VisitInfo
+     */
+    public static function fromStdClass(stdClass $data): self
+    {
+        $instance = new static();
+
+        $instance->setTimestamp($data->timestamp ?? '');
+        if (isset($data->date)) {
+            $instance->setDate($data->date);
+        } else {
+            $instance->setDateFromTimestamp($data->timestamp ?? '');
+        }
+        $instance->setIpHash($data->ip_hash ?? '');
+        $instance->setUrl($data->url ?? '');
+        $instance->setReferrer($data->referrer ?? '');
+
+        return $instance;
     }
 
     /**
@@ -150,7 +183,7 @@ class VisitInfo
      * @param string|null $referrer
      * @return self
      */
-    public function setReferrer(?string $referrer): self
+    public function setReferrer(string $referrer): self
     {
         $this->referrer = $referrer;
 

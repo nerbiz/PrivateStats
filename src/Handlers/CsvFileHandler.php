@@ -67,12 +67,7 @@ class CsvFileHandler extends AbstractFileHandler
 
             // Create a visit information object from the row data
             $row = array_combine($headerRow, $csvRow);
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($row['timestamp'] ?? '')
-                ->setDateFromTimestamp($row['timestamp'] ?? '')
-                ->setIpHash($row['ip_hash'] ?? '')
-                ->setUrl($row['url'] ?? '')
-                ->setReferrer($row['referrer'] ?? '');
+            $visitInfo = VisitInfo::fromArray($row);
 
             // Add to the collection, if it passes the where clauses
             if ($this->keepItem($visitInfo)) {

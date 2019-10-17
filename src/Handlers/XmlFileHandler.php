@@ -45,12 +45,7 @@ class XmlFileHandler extends AbstractFileHandler
         $simpleXmlElement = $this->getXmlFromFile();
 
         foreach ($simpleXmlElement as $entry) {
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($entry->timestamp)
-                ->setDateFromTimestamp($entry->timestamp)
-                ->setIpHash($entry->ip_hash)
-                ->setUrl($entry->url)
-                ->setReferrer($entry->referrer);
+            $visitInfo = VisitInfo::fromArray((array)$entry);
 
             if ($this->keepItem($visitInfo)) {
                 $allRows[] = $visitInfo;

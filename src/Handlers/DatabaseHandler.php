@@ -50,24 +50,14 @@ class DatabaseHandler extends AbstractHandler
      */
     public function read(): array
     {
-        $allRows = [];
-
         $driver = $this->databaseConnection->getDriver();
         $driver->ensureTable();
         $driver->ensureColumns();
 
         $selectStatement = $driver->getSelectStatement($this->whereClauses);
-        foreach ($selectStatement->fetchAll() as $item) {
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($item->timestamp)
-                ->setDateFromTimestamp($item->timestamp)
-                ->setIpHash($item->ip_hash)
-                ->setUrl($item->url)
-                ->setReferrer($item->referrer);
 
-            $allRows[] = $visitInfo;
-        }
-
-        return $allRows;
+        return array_map(function ($item) {
+            return VisitInfo::fromStdClass($item);
+        }, $selectStatement->fetchAll());
     }
 }
