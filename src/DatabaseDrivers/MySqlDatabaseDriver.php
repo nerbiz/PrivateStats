@@ -100,7 +100,7 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function getSelectStatement(ReadQuery $readQuery): PDOStatement
     {
-        // Create where queries per clause
+        // Create 'where' queries per clause
         $whereQueries = array_map(function ($whereClause) {
             return sprintf(
                 "`%s` %s '%s'",
@@ -110,9 +110,15 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             );
         }, $readQuery->getWhereClauses());
 
-        // Construct the full where query
+        // Construct the full 'where' query
         $fullWhereQuery = (count($whereQueries) > 0)
             ? 'where ' . implode(' and ', $whereQueries)
+            : '';
+
+        // Construct the 'order by' query
+        $orderByClause = $readQuery->getOrderByClause();
+        $orderByQuery = ($orderByClause !== null)
+            ? sprintf('order by `%s` %s', $orderByClause->getKey(), $orderByClause->getOrder())
             : '';
 
         return $this->databaseConnection
@@ -120,9 +126,11 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             ->query(sprintf(
                 'select *
                 from `%s`
+                %s
                 %s',
                 $this->databaseConnection->getFullTableName(),
-                $fullWhereQuery
+                $fullWhereQuery,
+                $orderByQuery
             ));
     }
 

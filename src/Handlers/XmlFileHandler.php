@@ -56,6 +56,12 @@ class XmlFileHandler extends AbstractFileHandler
             }
         }
 
+        // Sort the results, if needed
+        $orderByClause = $readQuery->getOrderByClause();
+        if ($orderByClause !== null) {
+            $allRows = $orderByClause->getSortedItems($allRows);
+        }
+
         return $allRows;
     }
 

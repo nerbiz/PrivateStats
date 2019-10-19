@@ -105,6 +105,27 @@ class VisitInfo
     }
 
     /**
+     * Get a value based on a key
+     * @param string $key
+     * @return mixed|null
+     */
+    public function getValueByKey(string $key)
+    {
+        switch ($key) {
+            case 'timestamp':
+                return $this->getTimestamp();
+            case 'ip_hash':
+                return $this->getIpHash();
+            case 'url':
+                return $this->getUrl();
+            case 'referrer':
+                return $this->getReferrer();
+            default:
+                return null;
+        }
+    }
+
+    /**
      * @return int
      */
     public function getTimestamp(): int

@@ -7,13 +7,19 @@ use Nerbiz\PrivateStats\VisitInfo;
 class ReadQuery
 {
     /**
-     * There where clauses used for reading data
+     * The 'where' clauses used for the query
      * @var WhereClause[]
      */
     protected $whereClauses = [];
 
     /**
-     * Add a where clause for reading data
+     * The 'order by' clause used for the query
+     * @var OrderByClause
+     */
+    protected $orderByClause;
+
+    /**
+     * Add a 'where' clause for the query
      * @param WhereClause $whereClause
      * @return self
      */
@@ -25,7 +31,19 @@ class ReadQuery
     }
 
     /**
-     * See if an item passes the where clauses
+     * Set the 'order by' clause for the query
+     * @param OrderByClause $orderByClause
+     * @return self
+     */
+    public function setOrderBy(OrderByClause $orderByClause): self
+    {
+        $this->orderByClause = $orderByClause;
+
+        return $this;
+    }
+
+    /**
+     * See if an item passes the 'where' clauses
      * @param VisitInfo $visitInfo
      * @return bool
      */
@@ -75,5 +93,13 @@ class ReadQuery
     public function getWhereClauses(): array
     {
         return $this->whereClauses;
+    }
+
+    /**
+     * @return OrderByClause
+     */
+    public function getOrderByClause(): OrderByClause
+    {
+        return $this->orderByClause;
     }
 }
