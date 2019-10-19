@@ -131,11 +131,6 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function filterBeforeInsert(array $values): array
     {
-        // Remove the 'date' property
-        if (isset($values['date'])) {
-            unset($values['date']);
-        }
-
         // Values can't exceed the maximum character length
         if (isset($values['url'])) {
             $values['url'] = substr($values['url'], 0, static::VARCHAR_LENGTH);

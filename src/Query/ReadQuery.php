@@ -40,7 +40,6 @@ class ReadQuery
         foreach ($this->whereClauses as $whereClause) {
             switch ($whereClause->getKey()) {
                 case 'timestamp':
-                case 'date':
                     $compareValue = $visitInfo->getTimestamp();
                     break;
                 case 'ip_hash':
