@@ -1,5 +1,16 @@
 # Release notes
 
+## 0.3.0
+#### 2019-10-19
+
+* Added fromArray(), fromStdClass(), toArray() and toStdClass() methods to VisitInfo.
+* Moved read query logic to the new ReadQuery class.
+* Added 'order by' functionality for reading visit information.
+* WhereClause now supports 'like' comparison.
+* The write/read methods of PrivateStats are now more intuitive.
+* Renamed the Drivers namespace to DatabaseDrivers.
+* Removed the 'date' property of stored visit information, it's redundant because of 'timestamp'.
+
 ## 0.2.0
 #### 2019-10-17
 
