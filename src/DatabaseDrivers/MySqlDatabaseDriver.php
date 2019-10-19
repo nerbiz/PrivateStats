@@ -114,7 +114,7 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
         $fullWhereQuery = (count($whereQueries) > 0)
             ? 'where ' . implode(' and ', $whereQueries)
             : '';
-        
+
         return $this->databaseConnection
             ->getPdo()
             ->query(sprintf(

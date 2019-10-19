@@ -45,8 +45,13 @@ class DatabaseHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function read(ReadQuery $readQuery): array
+    public function read(?ReadQuery $readQuery = null): array
     {
+        // Create an empty query object, if none given
+        if ($readQuery === null) {
+            $readQuery = new ReadQuery();
+        }
+
         $driver = $this->databaseConnection->getDriver();
         $driver->ensureTable();
         $driver->ensureColumns();

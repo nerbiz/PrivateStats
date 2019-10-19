@@ -16,8 +16,8 @@ abstract class AbstractHandler
 
     /**
      * Get stored information
-     * @param ReadQuery $readQuery
+     * @param ReadQuery|null $readQuery
      * @return VisitInfo[]
      */
-    abstract public function read(ReadQuery $readQuery): array;
+    abstract public function read(?ReadQuery $readQuery = null): array;
 }

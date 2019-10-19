@@ -36,8 +36,13 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(ReadQuery $readQuery): array
+    public function read(?ReadQuery $readQuery = null): array
     {
+        // Create an empty query object, if none given
+        if ($readQuery === null) {
+            $readQuery = new ReadQuery();
+        }
+
         $allRows = [];
 
         $fileHandle = fopen($this->filePath, 'r');
