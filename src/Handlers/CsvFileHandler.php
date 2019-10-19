@@ -22,23 +22,11 @@ class CsvFileHandler extends AbstractFileHandler
 
         // Add a header row, if the file is newly created
         if ($fileIsNew) {
-            fputcsv($fileHandle, [
-                'timestamp',
-                'date',
-                'ip_hash',
-                'url',
-                'referrer',
-            ]);
+            fputcsv($fileHandle, array_keys(VisitInfo::getKeysPropertiesMap()));
         }
 
         // Add a row to the file
-        fputcsv($fileHandle, [
-            $visitInfo->getIpHash(),
-            $visitInfo->getUrl(),
-            $visitInfo->getReferrer(),
-            $visitInfo->getTimestamp(),
-            $visitInfo->getDate(),
-        ]);
+        fputcsv($fileHandle, $visitInfo->toArray());
 
         fclose($fileHandle);
 

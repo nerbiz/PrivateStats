@@ -38,6 +38,18 @@ class VisitInfo
     protected $referrer;
 
     /**
+     * A mapping of array keys with corresponding class properties
+     * @var array
+     */
+    protected static $keysPropertiesMap = [
+        'timestamp' => 'timestamp',
+        'date' => 'date',
+        'ip_hash' => 'ipHash',
+        'url' => 'url',
+        'referrer' => 'referrer',
+    ];
+
+    /**
      * Fill the properties of this instance
      * @return void
      */
@@ -53,34 +65,57 @@ class VisitInfo
 
     /**
      * Create a new instance from an array
-     * @param array $data
+     * @param array $values
      * @return self
      */
-    public static function fromArray(array $data): self
+    public static function fromArray(array $values): self
     {
-        return static::fromStdClass((object)$data);
+        return static::fromStdClass((object)$values);
+    }
+
+    /**
+     * Create an array of this instance's properties
+     * @return array
+     */
+    public function toArray(): array
+    {
+        $array = [];
+        foreach (static::getKeysPropertiesMap() as $key => $property) {
+            $array[$key] = $this->{'get' . ucfirst($property)}();
+        }
+
+        return $array;
     }
 
     /**
      * Create a new instance from a stdClass instance
-     * @param stdClass $data
+     * @param stdClass $values
      * @return VisitInfo
      */
-    public static function fromStdClass(stdClass $data): self
+    public static function fromStdClass(stdClass $values): self
     {
         $instance = new static();
 
-        $instance->setTimestamp($data->timestamp ?? '');
-        if (isset($data->date)) {
-            $instance->setDate($data->date);
+        $instance->setTimestamp($values->timestamp ?? '');
+        if (isset($values->date)) {
+            $instance->setDate($values->date);
         } else {
-            $instance->setDateFromTimestamp($data->timestamp ?? '');
+            $instance->setDateFromTimestamp($values->timestamp ?? '');
         }
-        $instance->setIpHash($data->ip_hash ?? '');
-        $instance->setUrl($data->url ?? '');
-        $instance->setReferrer($data->referrer ?? '');
+        $instance->setIpHash($values->ip_hash ?? '');
+        $instance->setUrl($values->url ?? '');
+        $instance->setReferrer($values->referrer ?? '');
 
         return $instance;
+    }
+
+    /**
+     * Create an stdClass of this instance's properties
+     * @return stdClass
+     */
+    public function toStdClass(): stdClass
+    {
+        return (object)$this->toArray();
     }
 
     /**
@@ -183,10 +218,18 @@ class VisitInfo
      * @param string|null $referrer
      * @return self
      */
-    public function setReferrer(string $referrer): self
+    public function setReferrer(?string $referrer): self
     {
         $this->referrer = $referrer;
 
         return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getKeysPropertiesMap(): array
+    {
+        return static::$keysPropertiesMap;
     }
 }

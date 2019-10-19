@@ -37,12 +37,9 @@ class DatabaseHandler extends AbstractHandler
 
         return $driver
             ->getPreparedInsertStatement()
-            ->execute($driver->filterBeforeInsert([
-                'ip_hash' => $visitInfo->getIpHash(),
-                'url' => $visitInfo->getUrl(),
-                'referrer' => $visitInfo->getReferrer(),
-                'timestamp' => $visitInfo->getTimestamp(),
-            ]));
+            ->execute($driver->filterBeforeInsert(
+                $visitInfo->toArray()
+            ));
     }
 
     /**
@@ -56,6 +53,7 @@ class DatabaseHandler extends AbstractHandler
 
         $selectStatement = $driver->getSelectStatement($readQuery);
 
+        // Create VisitInfo instances from fetched rows
         return array_map(function ($item) {
             return VisitInfo::fromStdClass($item);
         }, $selectStatement->fetchAll());

@@ -18,11 +18,11 @@ class XmlFileHandler extends AbstractFileHandler
 
         // Add an entry to the statistics
         $entry = $simpleXmlElement->addChild('entry');
+        $entry->addChild('timestamp', $visitInfo->getTimestamp());
+        $entry->addChild('date', $visitInfo->getDate());
         $entry->addChild('ip_hash', $visitInfo->getIpHash());
         $entry->addChild('url', $visitInfo->getUrl());
         $entry->addChild('referrer', $visitInfo->getReferrer());
-        $entry->addChild('timestamp', $visitInfo->getTimestamp());
-        $entry->addChild('date', $visitInfo->getDate());
 
         // Format with newlines and indentation
         $domDocument = new DOMDocument('1.0');

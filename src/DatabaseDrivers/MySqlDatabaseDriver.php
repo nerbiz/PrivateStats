@@ -21,14 +21,16 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             ->getPdo()
             ->exec(sprintf(
                 'create table if not exists `%s` (
-                    `id` int(10) unsigned not null auto_increment,
-                    `timestamp` int(10) unsigned not null,
+                    %s,
+                    %s,
                     %s,
                     %s,
                     %s,
                     primary key (`id`)
                 )',
                 $this->databaseConnection->getFullTableName(),
+                $this->getColumnDefinition('id'),
+                $this->getColumnDefinition('timestamp'),
                 $this->getColumnDefinition('ip_hash'),
                 $this->getColumnDefinition('url'),
                 $this->getColumnDefinition('referrer')
@@ -129,6 +131,11 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
      */
     public function filterBeforeInsert(array $values): array
     {
+        // Remove the 'date' property
+        if (isset($values['date'])) {
+            unset($values['date']);
+        }
+
         // Values can't exceed the maximum character length
         if (isset($values['url'])) {
             $values['url'] = substr($values['url'], 0, static::VARCHAR_LENGTH);
@@ -149,6 +156,10 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     protected function getColumnDefinition(string $columnName): string
     {
         switch ($columnName) {
+            case 'id':
+                return '`id` int(10) unsigned not null auto_increment';
+            case 'timestamp':
+                return '`timestamp` int(10) unsigned not null';
             case 'ip_hash':
                 return sprintf('`ip_hash` varchar(%d) null', static::VARCHAR_LENGTH);
             case 'url':
