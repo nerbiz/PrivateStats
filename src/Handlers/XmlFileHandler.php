@@ -14,7 +14,7 @@ class XmlFileHandler extends AbstractFileHandler
      */
     public function write(VisitInfo $visitInfo): bool
     {
-        $simpleXmlElement = $this->getXmlFromFile();
+        $simpleXmlElement = $this->getCurrentXml();
 
         // Add an entry to the statistics
         $entry = $simpleXmlElement->addChild('entry');
@@ -41,7 +41,7 @@ class XmlFileHandler extends AbstractFileHandler
     public function read(?ReadQuery $readQuery = null): array
     {
         $allRows = [];
-        $simpleXmlElement = $this->getXmlFromFile();
+        $simpleXmlElement = $this->getCurrentXml();
 
         foreach ($simpleXmlElement as $entry) {
             $visitInfo = VisitInfo::fromArray((array)$entry);
@@ -68,15 +68,15 @@ class XmlFileHandler extends AbstractFileHandler
      * Get existing XML, or create a new document
      * @return SimpleXMLElement
      */
-    protected function getXmlFromFile(): SimpleXMLElement
+    protected function getCurrentXml(): SimpleXMLElement
     {
-        if (! file_exists($this->filePath)) {
+        if (file_exists($this->filePath)) {
+            return simplexml_load_file($this->filePath);
+        } else {
             return new SimpleXMLElement(''
                 . '<?xml version="1.0" encoding="UTF-8"?>'
                 . '<statistics></statistics>'
             );
-        } else {
-            return simplexml_load_file($this->filePath);
         }
     }
 }

@@ -27,7 +27,6 @@ class CsvFileHandler extends AbstractFileHandler
 
         // Add a row to the file
         fputcsv($fileHandle, $visitInfo->toArray());
-
         fclose($fileHandle);
 
         return true;
