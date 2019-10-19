@@ -98,9 +98,32 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     /**
      * {@inheritdoc}
      */
-    public function getSelectStatement(ReadQuery $readQuery): PDOStatement
+    public function getSelectStatement(?ReadQuery $readQuery = null): PDOStatement
     {
-        // Create 'where' queries per clause
+        return $this->databaseConnection
+            ->getPdo()
+            ->query(sprintf(
+                'select *
+                from `%s`
+                %s
+                %s',
+                $this->databaseConnection->getFullTableName(),
+                ($readQuery !== null)
+                    ? $this->createWhereQuery($readQuery)
+                    : '',
+                ($readQuery !== null)
+                    ? $this->createOrderByQuery($readQuery)
+                    : ''
+            ));
+    }
+
+    /**
+     * Create 'where' queries per clause
+     * @param ReadQuery $readQuery
+     * @return string
+     */
+    protected function createWhereQuery(ReadQuery $readQuery): string
+    {
         $whereQueries = array_map(function ($whereClause) {
             return sprintf(
                 "`%s` %s '%s'",
@@ -111,27 +134,23 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
         }, $readQuery->getWhereClauses());
 
         // Construct the full 'where' query
-        $fullWhereQuery = (count($whereQueries) > 0)
+        return (count($whereQueries) > 0)
             ? 'where ' . implode(' and ', $whereQueries)
             : '';
+    }
 
-        // Construct the 'order by' query
+    /**
+     * Construct an 'order by' query
+     * @param ReadQuery|null $readQuery
+     * @return string
+     */
+    protected function createOrderByQuery(?ReadQuery $readQuery): string
+    {
         $orderByClause = $readQuery->getOrderByClause();
-        $orderByQuery = ($orderByClause !== null)
+
+        return ($orderByClause !== null)
             ? sprintf('order by `%s` %s', $orderByClause->getKey(), $orderByClause->getOrder())
             : '';
-
-        return $this->databaseConnection
-            ->getPdo()
-            ->query(sprintf(
-                'select *
-                from `%s`
-                %s
-                %s',
-                $this->databaseConnection->getFullTableName(),
-                $fullWhereQuery,
-                $orderByQuery
-            ));
     }
 
     /**

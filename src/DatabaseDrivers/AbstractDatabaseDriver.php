@@ -50,10 +50,10 @@ abstract class AbstractDatabaseDriver
 
     /**
      * Get a statement for selecting data, with optional 'where' clauses
-     * @param ReadQuery $readQuery
+     * @param ReadQuery|null $readQuery
      * @return PDOStatement
      */
-    abstract public function getSelectStatement(ReadQuery $readQuery): PDOStatement;
+    abstract public function getSelectStatement(?ReadQuery $readQuery = null): PDOStatement;
 
     /**
      * Make optional adjustments, before inserting data into the database

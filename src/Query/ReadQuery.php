@@ -14,9 +14,9 @@ class ReadQuery
 
     /**
      * The 'order by' clause used for the query
-     * @var OrderByClause
+     * @var OrderByClause|null
      */
-    protected $orderByClause;
+    protected $orderByClause = null;
 
     /**
      * Add a 'where' clause for the query
@@ -96,9 +96,9 @@ class ReadQuery
     }
 
     /**
-     * @return OrderByClause
+     * @return OrderByClause|null
      */
-    public function getOrderByClause(): OrderByClause
+    public function getOrderByClause(): ?OrderByClause
     {
         return $this->orderByClause;
     }

@@ -38,11 +38,6 @@ class CsvFileHandler extends AbstractFileHandler
      */
     public function read(?ReadQuery $readQuery = null): array
     {
-        // Create an empty query object, if none given
-        if ($readQuery === null) {
-            $readQuery = new ReadQuery();
-        }
-
         $allRows = [];
 
         $fileHandle = fopen($this->filePath, 'r');
@@ -63,17 +58,21 @@ class CsvFileHandler extends AbstractFileHandler
             $visitInfo = VisitInfo::fromArray($row);
 
             // Add to the collection, if it passes the where clauses
-            if ($readQuery->itemPassesChecks($visitInfo)) {
+            if ($readQuery === null) {
+                $allRows[] = $visitInfo;
+            } else if ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }
 
         // Sort the results, if needed
-        $orderByClause = $readQuery->getOrderByClause();
-        if ($orderByClause !== null) {
-            $allRows = $orderByClause->getSortedItems($allRows);
+        if ($readQuery !== null) {
+            $orderByClause = $readQuery->getOrderByClause();
+            if ($orderByClause !== null) {
+                $allRows = $orderByClause->getSortedItems($allRows);
+            }
         }
-        
+
         fclose($fileHandle);
         return $allRows;
     }
