@@ -1,7 +1,8 @@
 <?php
 
-namespace Nerbiz\PrivateStats\Drivers;
+namespace Nerbiz\PrivateStats\DatabaseDrivers;
 
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use PDOStatement;
 
 class MySqlDatabaseDriver extends AbstractDatabaseDriver
@@ -20,14 +21,16 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
             ->getPdo()
             ->exec(sprintf(
                 'create table if not exists `%s` (
-                    `id` int(10) unsigned not null auto_increment,
-                    `timestamp` int(10) unsigned not null,
+                    %s,
+                    %s,
                     %s,
                     %s,
                     %s,
                     primary key (`id`)
                 )',
                 $this->databaseConnection->getFullTableName(),
+                $this->getColumnDefinition('id'),
+                $this->getColumnDefinition('timestamp'),
                 $this->getColumnDefinition('ip_hash'),
                 $this->getColumnDefinition('url'),
                 $this->getColumnDefinition('referrer')
@@ -95,33 +98,59 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     /**
      * {@inheritdoc}
      */
-    public function getSelectStatement(array $whereClauses = []): PDOStatement
+    public function getSelectStatement(?ReadQuery $readQuery = null): PDOStatement
     {
-        // Create where queries per clause
-        $whereQueries = [];
-        foreach ($whereClauses as $whereClause) {
-            $whereQueries[] = sprintf(
-                "`%s` %s '%s'",
-                $whereClause->getKey(),
-                $whereClause->getOperator(),
-                $whereClause->getValue()
-            );
-        }
-
-        // Construct the full where query
-        $fullWhereQuery = (count($whereQueries) > 0)
-            ? 'where ' . implode(' and ', $whereQueries)
-            : '';
-        
         return $this->databaseConnection
             ->getPdo()
             ->query(sprintf(
                 'select *
                 from `%s`
+                %s
                 %s',
                 $this->databaseConnection->getFullTableName(),
-                $fullWhereQuery
+                ($readQuery !== null)
+                    ? $this->createWhereQuery($readQuery)
+                    : '',
+                ($readQuery !== null)
+                    ? $this->createOrderByQuery($readQuery)
+                    : ''
             ));
+    }
+
+    /**
+     * Create 'where' queries per clause
+     * @param ReadQuery $readQuery
+     * @return string
+     */
+    protected function createWhereQuery(ReadQuery $readQuery): string
+    {
+        $whereQueries = array_map(function ($whereClause) {
+            return sprintf(
+                "`%s` %s '%s'",
+                $whereClause->getKey(),
+                $whereClause->getOperator(),
+                $whereClause->getValue()
+            );
+        }, $readQuery->getWhereClauses());
+
+        // Construct the full 'where' query
+        return (count($whereQueries) > 0)
+            ? 'where ' . implode(' and ', $whereQueries)
+            : '';
+    }
+
+    /**
+     * Construct an 'order by' query
+     * @param ReadQuery|null $readQuery
+     * @return string
+     */
+    protected function createOrderByQuery(?ReadQuery $readQuery): string
+    {
+        $orderByClause = $readQuery->getOrderByClause();
+
+        return ($orderByClause !== null)
+            ? sprintf('order by `%s` %s', $orderByClause->getKey(), $orderByClause->getOrder())
+            : '';
     }
 
     /**
@@ -149,6 +178,10 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     protected function getColumnDefinition(string $columnName): string
     {
         switch ($columnName) {
+            case 'id':
+                return '`id` int(10) unsigned not null auto_increment';
+            case 'timestamp':
+                return '`timestamp` int(10) unsigned not null';
             case 'ip_hash':
                 return sprintf('`ip_hash` varchar(%d) null', static::VARCHAR_LENGTH);
             case 'url':

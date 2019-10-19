@@ -14,8 +14,7 @@
         }
     },
     "require": {
-        "php": "^7.2",
-        "jenssegers/date": "^3.5"
+        "php": "^7.2"
     },
     "support" : {
         "docs": "https://github.com/nerbiz/private-stats"

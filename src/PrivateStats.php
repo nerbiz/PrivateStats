@@ -3,6 +3,7 @@
 namespace Nerbiz\PrivateStats;
 
 use Nerbiz\PrivateStats\Handlers\AbstractHandler;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 
 class PrivateStats
 {
@@ -40,7 +41,7 @@ class PrivateStats
      * Store the current visit information
      * @return bool Indicates whether storing was successful
      */
-    public function storeCurrentVisitInfo(): bool
+    public function registerVisit(): bool
     {
         // Check if the current visit should be excluded
         foreach ($this->excludeIps as $excludeIp) {
@@ -62,10 +63,11 @@ class PrivateStats
     }
 
     /**
-     * @return AbstractHandler
+     * @param ReadQuery|null $readQuery
+     * @return VisitInfo[]
      */
-    public function getHandler(): AbstractHandler
+    public function getVisits(?ReadQuery $readQuery = null): array
     {
-        return $this->handler;
+        return $this->handler->read($readQuery);
     }
 }

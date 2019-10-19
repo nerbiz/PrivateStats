@@ -1,6 +1,6 @@
 <?php
 
-namespace Nerbiz\PrivateStats\Handlers;
+namespace Nerbiz\PrivateStats\Query;
 
 class WhereClause
 {
@@ -31,7 +31,7 @@ class WhereClause
     {
         $this->key = $key;
         $this->value = $value;
-        $this->operator = $operator;
+        $this->operator = strtolower($operator);
     }
 
     /**
@@ -60,6 +60,11 @@ class WhereClause
                 return ($value < $this->value);
             case '<=':
                 return ($value <= $this->value);
+            case 'like':
+                $regex = preg_quote($this->value);
+                // Translate percentage signs to regex syntax
+                $regex = str_replace('%', '.*', $regex);
+                return (preg_match('/' . $regex . '/', $value) === 1);
         }
     }
 

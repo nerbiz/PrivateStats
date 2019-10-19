@@ -1,9 +1,10 @@
 <?php
 
-namespace Nerbiz\PrivateStats\Drivers;
+namespace Nerbiz\PrivateStats\DatabaseDrivers;
 
 use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
-use Nerbiz\PrivateStats\Handlers\WhereClause;
+use Nerbiz\PrivateStats\Query\ReadQuery;
+use Nerbiz\PrivateStats\VisitInfo;
 use PDOStatement;
 
 abstract class AbstractDatabaseDriver
@@ -18,11 +19,15 @@ abstract class AbstractDatabaseDriver
      * The columns that the statistics table must have
      * @var array
      */
-    protected $requiredColumns = ['timestamp', 'ip_hash', 'url', 'referrer'];
+    protected $requiredColumns = [];
 
+    /**
+     * @param DatabaseConnection $databaseConnection
+     */
     public function __construct(DatabaseConnection $databaseConnection)
     {
         $this->databaseConnection = $databaseConnection;
+        $this->requiredColumns = array_keys(VisitInfo::getKeysPropertiesMap());
     }
 
     /**
@@ -45,10 +50,10 @@ abstract class AbstractDatabaseDriver
 
     /**
      * Get a statement for selecting data, with optional 'where' clauses
-     * @param WhereClause[] $whereClauses
+     * @param ReadQuery|null $readQuery
      * @return PDOStatement
      */
-    abstract public function getSelectStatement(array $whereClauses = []): PDOStatement;
+    abstract public function getSelectStatement(?ReadQuery $readQuery = null): PDOStatement;
 
     /**
      * Make optional adjustments, before inserting data into the database

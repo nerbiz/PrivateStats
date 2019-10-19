@@ -2,7 +2,7 @@
 
 namespace Nerbiz\PrivateStats\Handlers;
 
-use Nerbiz\PrivateStats\Collections\CsvQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 
 class CsvFileHandler extends AbstractFileHandler
@@ -22,23 +22,11 @@ class CsvFileHandler extends AbstractFileHandler
 
         // Add a header row, if the file is newly created
         if ($fileIsNew) {
-            fputcsv($fileHandle, [
-                'timestamp',
-                'date',
-                'ip_hash',
-                'url',
-                'referrer',
-            ]);
+            fputcsv($fileHandle, array_keys(VisitInfo::getKeysPropertiesMap()));
         }
 
         // Add a row to the file
-        fputcsv($fileHandle, [
-            $visitInfo->getIpHash(),
-            $visitInfo->getUrl(),
-            $visitInfo->getReferrer(),
-            $visitInfo->getTimestamp(),
-            $visitInfo->getDate(),
-        ]);
+        fputcsv($fileHandle, $visitInfo->toArray());
 
         fclose($fileHandle);
 
@@ -48,7 +36,7 @@ class CsvFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(?ReadQuery $readQuery = null): array
     {
         $allRows = [];
 
@@ -67,21 +55,25 @@ class CsvFileHandler extends AbstractFileHandler
 
             // Create a visit information object from the row data
             $row = array_combine($headerRow, $csvRow);
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($row['timestamp'] ?? '')
-                ->setDateFromTimestamp($row['timestamp'] ?? '')
-                ->setIpHash($row['ip_hash'] ?? '')
-                ->setUrl($row['url'] ?? '')
-                ->setReferrer($row['referrer'] ?? '');
+            $visitInfo = VisitInfo::fromArray($row);
 
             // Add to the collection, if it passes the where clauses
-            if ($this->keepItem($visitInfo)) {
+            if ($readQuery === null) {
+                $allRows[] = $visitInfo;
+            } else if ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }
 
-        fclose($fileHandle);
+        // Sort the results, if needed
+        if ($readQuery !== null) {
+            $orderByClause = $readQuery->getOrderByClause();
+            if ($orderByClause !== null) {
+                $allRows = $orderByClause->getSortedItems($allRows);
+            }
+        }
 
+        fclose($fileHandle);
         return $allRows;
     }
 }

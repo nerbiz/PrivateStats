@@ -3,7 +3,7 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use DOMDocument;
-use Nerbiz\PrivateStats\Collections\XmlQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use SimpleXMLElement;
 
@@ -18,11 +18,10 @@ class XmlFileHandler extends AbstractFileHandler
 
         // Add an entry to the statistics
         $entry = $simpleXmlElement->addChild('entry');
+        $entry->addChild('timestamp', $visitInfo->getTimestamp());
         $entry->addChild('ip_hash', $visitInfo->getIpHash());
         $entry->addChild('url', $visitInfo->getUrl());
         $entry->addChild('referrer', $visitInfo->getReferrer());
-        $entry->addChild('timestamp', $visitInfo->getTimestamp());
-        $entry->addChild('date', $visitInfo->getDate());
 
         // Format with newlines and indentation
         $domDocument = new DOMDocument('1.0');
@@ -39,21 +38,26 @@ class XmlFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(?ReadQuery $readQuery = null): array
     {
         $allRows = [];
         $simpleXmlElement = $this->getXmlFromFile();
 
         foreach ($simpleXmlElement as $entry) {
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($entry->timestamp)
-                ->setDateFromTimestamp($entry->timestamp)
-                ->setIpHash($entry->ip_hash)
-                ->setUrl($entry->url)
-                ->setReferrer($entry->referrer);
+            $visitInfo = VisitInfo::fromArray((array)$entry);
 
-            if ($this->keepItem($visitInfo)) {
+            if ($readQuery === null) {
                 $allRows[] = $visitInfo;
+            } else if ($readQuery->itemPassesChecks($visitInfo)) {
+                $allRows[] = $visitInfo;
+            }
+        }
+
+        // Sort the results, if needed
+        if ($readQuery !== null) {
+            $orderByClause = $readQuery->getOrderByClause();
+            if ($orderByClause !== null) {
+                $allRows = $orderByClause->getSortedItems($allRows);
             }
         }
 

@@ -3,7 +3,7 @@
 namespace Nerbiz\PrivateStats\Handlers;
 
 use Exception;
-use Nerbiz\PrivateStats\Collections\DatabaseQuery;
+use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
 use PDO;
 
@@ -37,37 +37,30 @@ class DatabaseHandler extends AbstractHandler
 
         return $driver
             ->getPreparedInsertStatement()
-            ->execute($driver->filterBeforeInsert([
-                'ip_hash' => $visitInfo->getIpHash(),
-                'url' => $visitInfo->getUrl(),
-                'referrer' => $visitInfo->getReferrer(),
-                'timestamp' => $visitInfo->getTimestamp(),
-            ]));
+            ->execute($driver->filterBeforeInsert(
+                $visitInfo->toArray()
+            ));
     }
 
     /**
      * {@inheritdoc}
      */
-    public function read(): array
+    public function read(?ReadQuery $readQuery = null): array
     {
-        $allRows = [];
+        // Create an empty query object, if none given
+        if ($readQuery === null) {
+            $readQuery = new ReadQuery();
+        }
 
         $driver = $this->databaseConnection->getDriver();
         $driver->ensureTable();
         $driver->ensureColumns();
 
-        $selectStatement = $driver->getSelectStatement($this->whereClauses);
-        foreach ($selectStatement->fetchAll() as $item) {
-            $visitInfo = (new VisitInfo())
-                ->setTimestamp($item->timestamp)
-                ->setDateFromTimestamp($item->timestamp)
-                ->setIpHash($item->ip_hash)
-                ->setUrl($item->url)
-                ->setReferrer($item->referrer);
+        $selectStatement = $driver->getSelectStatement($readQuery);
 
-            $allRows[] = $visitInfo;
-        }
-
-        return $allRows;
+        // Create VisitInfo instances from fetched rows
+        return array_map(function ($item) {
+            return VisitInfo::fromStdClass($item);
+        }, $selectStatement->fetchAll());
     }
 }
