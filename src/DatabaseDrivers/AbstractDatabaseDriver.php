@@ -4,6 +4,7 @@ namespace Nerbiz\PrivateStats\DatabaseDrivers;
 
 use Nerbiz\PrivateStats\Handlers\DatabaseConnection;
 use Nerbiz\PrivateStats\Query\ReadQuery;
+use Nerbiz\PrivateStats\VisitInfo;
 use PDOStatement;
 
 abstract class AbstractDatabaseDriver
@@ -18,11 +19,15 @@ abstract class AbstractDatabaseDriver
      * The columns that the statistics table must have
      * @var array
      */
-    protected $requiredColumns = ['timestamp', 'ip_hash', 'url', 'referrer'];
+    protected $requiredColumns = [];
 
+    /**
+     * @param DatabaseConnection $databaseConnection
+     */
     public function __construct(DatabaseConnection $databaseConnection)
     {
         $this->databaseConnection = $databaseConnection;
+        $this->requiredColumns = array_keys(VisitInfo::getKeysPropertiesMap());
     }
 
     /**
