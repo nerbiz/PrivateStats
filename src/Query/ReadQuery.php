@@ -20,24 +20,27 @@ class ReadQuery
 
     /**
      * Add a 'where' clause for the query
-     * @param WhereClause $whereClause
+     * @param string $key
+     * @param mixed  $value
+     * @param string $operator
      * @return self
      */
-    public function addWhere(WhereClause $whereClause): self
+    public function addWhere(string $key, $value, string $operator = '=='): self
     {
-        $this->whereClauses[] = $whereClause;
+        $this->whereClauses[] = new WhereClause($key, $value, $operator);
 
         return $this;
     }
 
     /**
      * Set the 'order by' clause for the query
-     * @param OrderByClause $orderByClause
+     * @param string $key
+     * @param string $order
      * @return self
      */
-    public function setOrderBy(OrderByClause $orderByClause): self
+    public function setOrderBy(string $key, string $order = 'asc'): self
     {
-        $this->orderByClause = $orderByClause;
+        $this->orderByClause = new OrderByClause($key, $order);
 
         return $this;
     }

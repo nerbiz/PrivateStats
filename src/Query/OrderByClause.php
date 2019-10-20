@@ -22,7 +22,7 @@ class OrderByClause
      * @param string $key
      * @param string $order
      */
-    public function __construct(string $key, string $order = 'asc')
+    public function __construct(string $key, string $order)
     {
         $this->key = $key;
 

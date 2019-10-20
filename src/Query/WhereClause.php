@@ -27,7 +27,7 @@ class WhereClause
      * @param mixed  $value
      * @param string $operator
      */
-    public function __construct(string $key, $value, string $operator = '==')
+    public function __construct(string $key, $value, string $operator)
     {
         $this->key = $key;
         $this->value = $value;
