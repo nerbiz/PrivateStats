@@ -59,7 +59,7 @@ class CsvFileHandler extends AbstractFileHandler
             // Add to the collection, if it passes the where clauses
             if ($readQuery === null) {
                 $allRows[] = $visitInfo;
-            } else if ($readQuery->itemPassesChecks($visitInfo)) {
+            } elseif ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }

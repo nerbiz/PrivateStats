@@ -46,9 +46,10 @@ class XmlFileHandler extends AbstractFileHandler
         foreach ($simpleXmlElement as $entry) {
             $visitInfo = VisitInfo::fromArray((array)$entry);
 
+            // Add to the collection, if it passes the where clauses
             if ($readQuery === null) {
                 $allRows[] = $visitInfo;
-            } else if ($readQuery->itemPassesChecks($visitInfo)) {
+            } elseif ($readQuery->itemPassesChecks($visitInfo)) {
                 $allRows[] = $visitInfo;
             }
         }

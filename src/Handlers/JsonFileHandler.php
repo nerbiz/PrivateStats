@@ -27,12 +27,29 @@ class JsonFileHandler extends AbstractFileHandler
      */
     public function read(?ReadQuery $readQuery = null): array
     {
+        $allRows = [];
         $jsonContents = $this->getCurrentJson();
 
-        // Create VisitInfo instances from the JSON items
-        return array_map(function ($item) {
-            return VisitInfo::fromStdClass($item);
-        }, $jsonContents);
+        foreach ($jsonContents as $item) {
+            $visitInfo = VisitInfo::fromStdClass($item);
+
+            // Add to the collection, if it passes the where clauses
+            if ($readQuery === null) {
+                $allRows[] = $visitInfo;
+            } elseif ($readQuery->itemPassesChecks($visitInfo)) {
+                $allRows[] = $visitInfo;
+            }
+        }
+
+        // Sort the results, if needed
+        if ($readQuery !== null) {
+            $orderByClause = $readQuery->getOrderByClause();
+            if ($orderByClause !== null) {
+                $allRows = $orderByClause->getSortedItems($allRows);
+            }
+        }
+
+        return $allRows;
     }
 
     /**

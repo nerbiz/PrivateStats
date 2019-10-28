@@ -36,6 +36,7 @@ class OrderByClause
     }
 
     /**
+     * Apply the ordering to an array of VisitInfo objects
      * @param VisitInfo[] $items
      * @return VisitInfo[]
      */
