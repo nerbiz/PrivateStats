@@ -22,7 +22,7 @@ class ReadQuery
      * @param string $orderByKey The key to order by
      * @param string $orderByOrder The ordering direction (asc/desc)
      */
-    public function __construct(string $orderByKey, string $orderByOrder)
+    public function __construct(string $orderByKey = 'timestamp', string $orderByOrder = 'desc')
     {
         $this->orderByClause = new OrderByClause($orderByKey, $orderByOrder);
     }
