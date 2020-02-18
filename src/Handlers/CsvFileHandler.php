@@ -66,10 +66,7 @@ class CsvFileHandler extends AbstractFileHandler
 
         // Sort the results, if needed
         if ($readQuery !== null) {
-            $orderByClause = $readQuery->getOrderByClause();
-            if ($orderByClause !== null) {
-                $allRows = $orderByClause->getSortedItems($allRows);
-            }
+            $allRows = $readQuery->getOrderByClause()->getSortedItems($allRows);
         }
 
         fclose($fileHandle);

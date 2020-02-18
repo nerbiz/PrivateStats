@@ -148,9 +148,11 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
     {
         $orderByClause = $readQuery->getOrderByClause();
 
-        return ($orderByClause !== null)
-            ? sprintf('order by `%s` %s', $orderByClause->getKey(), $orderByClause->getOrder())
-            : '';
+        return sprintf(
+            'order by `%s` %s',
+            $orderByClause->getKey(),
+            $orderByClause->getOrder()
+        );
     }
 
     /**

@@ -14,9 +14,18 @@ class ReadQuery
 
     /**
      * The 'order by' clause used for the query
-     * @var OrderByClause|null
+     * @var OrderByClause
      */
-    protected $orderByClause = null;
+    protected $orderByClause;
+
+    /**
+     * @param string $orderByKey The key to order by
+     * @param string $orderByOrder The ordering direction (asc/desc)
+     */
+    public function __construct(string $orderByKey, string $orderByOrder)
+    {
+        $this->orderByClause = new OrderByClause($orderByKey, $orderByOrder);
+    }
 
     /**
      * Add a 'where' clause for the query
@@ -28,19 +37,6 @@ class ReadQuery
     public function addWhere(string $key, $value, string $operator = '=='): self
     {
         $this->whereClauses[] = new WhereClause($key, $value, $operator);
-
-        return $this;
-    }
-
-    /**
-     * Set the 'order by' clause for the query
-     * @param string $key
-     * @param string $order
-     * @return self
-     */
-    public function setOrderBy(string $key, string $order = 'asc'): self
-    {
-        $this->orderByClause = new OrderByClause($key, $order);
 
         return $this;
     }
@@ -99,9 +95,9 @@ class ReadQuery
     }
 
     /**
-     * @return OrderByClause|null
+     * @return OrderByClause
      */
-    public function getOrderByClause(): ?OrderByClause
+    public function getOrderByClause(): OrderByClause
     {
         return $this->orderByClause;
     }

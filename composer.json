@@ -1,22 +1,22 @@
 {
-    "name": "nerbiz/private-stats",
-    "description": "Local visitor statistics, with an emphasis on visitor privacy",
-    "license": "Unlicense",
-    "authors": [
-        {
-            "name": "Sybren Dijkstra",
-            "email": "nerbiz@gmail.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Nerbiz\\PrivateStats\\": "src/"
-        }
-    },
-    "require": {
-        "php": "^7.2"
-    },
-    "support" : {
-        "docs": "https://github.com/nerbiz/private-stats"
+  "name": "nerbiz/private-stats",
+  "description": "Local visitor statistics, with an emphasis on visitor privacy",
+  "license": "Unlicense",
+  "authors": [
+    {
+      "name": "Sybren Dijkstra",
+      "email": "nerbiz@gmail.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Nerbiz\\PrivateStats\\": "src/"
+    }
+  },
+  "require": {
+    "php": "^7.2"
+  },
+  "support" : {
+    "docs": "https://github.com/nerbiz/private-stats"
+  }
 }
