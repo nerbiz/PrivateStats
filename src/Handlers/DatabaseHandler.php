@@ -61,6 +61,6 @@ class DatabaseHandler extends AbstractHandler
         // Create VisitInfo instances from fetched rows
         return array_map(function ($item) {
             return VisitInfo::fromStdClass($item);
-        }, $selectStatement->fetchAll());
+        }, $selectStatement->fetchAll(PDO::FETCH_OBJ));
     }
 }

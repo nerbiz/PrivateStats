@@ -3,6 +3,7 @@
 namespace Nerbiz\PrivateStats\DatabaseDrivers;
 
 use Nerbiz\PrivateStats\Query\ReadQuery;
+use PDO;
 use PDOStatement;
 
 class MySqlDatabaseDriver extends AbstractDatabaseDriver
@@ -52,7 +53,7 @@ class MySqlDatabaseDriver extends AbstractDatabaseDriver
 
         $currentColumns = array_map(function ($row) {
             return $row->Field;
-        }, $statement->fetchAll());
+        }, $statement->fetchAll(PDO::FETCH_OBJ));
 
         $missingColumns = array_diff($this->requiredColumns, $currentColumns);
 
