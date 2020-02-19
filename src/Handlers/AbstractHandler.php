@@ -4,6 +4,7 @@ namespace Nerbiz\PrivateStats\Handlers;
 
 use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
+use Nerbiz\PrivateStats\VisitInfoCollection;
 
 abstract class AbstractHandler
 {
@@ -17,7 +18,7 @@ abstract class AbstractHandler
     /**
      * Get stored information
      * @param ReadQuery|null $readQuery
-     * @return VisitInfo[]
+     * @return VisitInfoCollection
      */
-    abstract public function read(?ReadQuery $readQuery = null): array;
+    abstract public function read(?ReadQuery $readQuery = null): VisitInfoCollection;
 }

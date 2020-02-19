@@ -5,6 +5,7 @@ namespace Nerbiz\PrivateStats\Handlers;
 use Exception;
 use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
+use Nerbiz\PrivateStats\VisitInfoCollection;
 use PDO;
 
 class DatabaseHandler extends AbstractHandler
@@ -45,7 +46,7 @@ class DatabaseHandler extends AbstractHandler
     /**
      * {@inheritdoc}
      */
-    public function read(?ReadQuery $readQuery = null): array
+    public function read(?ReadQuery $readQuery = null): VisitInfoCollection
     {
         // Create an empty query object, if none given
         if ($readQuery === null) {
@@ -59,8 +60,10 @@ class DatabaseHandler extends AbstractHandler
         $selectStatement = $driver->getSelectStatement($readQuery);
 
         // Create VisitInfo instances from fetched rows
-        return array_map(function ($item) {
+        $rows = array_map(function ($item) {
             return VisitInfo::fromStdClass($item);
         }, $selectStatement->fetchAll(PDO::FETCH_OBJ));
+
+        return new VisitInfoCollection($rows);
     }
 }

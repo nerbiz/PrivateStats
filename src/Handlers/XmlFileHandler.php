@@ -5,6 +5,7 @@ namespace Nerbiz\PrivateStats\Handlers;
 use DOMDocument;
 use Nerbiz\PrivateStats\Query\ReadQuery;
 use Nerbiz\PrivateStats\VisitInfo;
+use Nerbiz\PrivateStats\VisitInfoCollection;
 use SimpleXMLElement;
 
 class XmlFileHandler extends AbstractFileHandler
@@ -38,7 +39,7 @@ class XmlFileHandler extends AbstractFileHandler
     /**
      * {@inheritdoc}
      */
-    public function read(?ReadQuery $readQuery = null): array
+    public function read(?ReadQuery $readQuery = null): VisitInfoCollection
     {
         $allRows = [];
         $simpleXmlElement = $this->getCurrentXml();
@@ -59,7 +60,7 @@ class XmlFileHandler extends AbstractFileHandler
             $allRows = $readQuery->getOrderByClause()->getSortedItems($allRows);
         }
 
-        return $allRows;
+        return new VisitInfoCollection($allRows);
     }
 
     /**

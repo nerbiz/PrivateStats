@@ -62,7 +62,7 @@ class OrderByClause
             }
         });
 
-        return $items;
+        return array_values($items);
     }
 
     /**

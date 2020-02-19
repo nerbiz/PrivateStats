@@ -64,9 +64,9 @@ class PrivateStats
 
     /**
      * @param ReadQuery|null $readQuery
-     * @return VisitInfo[]
+     * @return VisitInfoCollection
      */
-    public function getVisits(?ReadQuery $readQuery = null): array
+    public function getVisits(?ReadQuery $readQuery = null): VisitInfoCollection
     {
         return $this->handler->read($readQuery);
     }

@@ -48,12 +48,11 @@ class ReadQuery
      */
     public function itemPassesChecks(VisitInfo $visitInfo): bool
     {
-        // Keep the item, if there are no where clauses
+        // The item always passes, if there are no where clauses
         if (count($this->whereClauses) < 1) {
             return true;
         }
 
-        $keepItem = 1;
         foreach ($this->whereClauses as $whereClause) {
             switch ($whereClause->getKey()) {
                 case 'timestamp':
@@ -73,17 +72,18 @@ class ReadQuery
                     break;
             }
 
-            // Only compare existing values
+            // Only compare valid keys
             if ($compareValue === null) {
                 continue;
             }
 
             // If at least one check fails, don't keep the item
-            $valuePasses = $whereClause->valuePasses($compareValue);
-            $keepItem = min($keepItem, (int)$valuePasses);
+            if (! $whereClause->valuePasses($compareValue)) {
+                return false;
+            }
         }
 
-        return ($keepItem === 1);
+        return true;
     }
 
     /**
