@@ -39,10 +39,16 @@ class PrivateStats
 
     /**
      * Store the current visit information
+     * @param VisitInfo|null $visitInfo
      * @return bool Indicates whether storing was successful
      */
-    public function registerVisit(): bool
+    public function registerVisit(?VisitInfo $visitInfo = null): bool
     {
+        // Store the VisitInfo object, if given
+        if ($visitInfo !== null) {
+            return $this->handler->write($visitInfo);
+        }
+
         // Check if the current visit should be excluded
         foreach ($this->excludeIps as $excludeIp) {
             // Create the regular expression, replace wildcard character
